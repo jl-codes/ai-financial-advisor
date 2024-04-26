@@ -30,6 +30,26 @@
             isLoading = false; // Set loading to false when the request is complete
         }
     }
+
+    async function getFinancialAdvice(start_date, end_date) {
+        const requestOptions : RequestInit = {
+            method: "POST",
+            headers: myHeaders,
+            body: JSON.stringify({start_date, end_date}),
+            redirect: "follow"
+        };
+
+        try {
+            const response = await fetch('http://localhost:8000/financial_advice/', requestOptions);
+            const data = await response.json();
+            answer = data.advice; // Assuming the backend responds with the advice directly
+        } catch (error) {
+            console.error('Error:', error);
+            answer = 'An error occurred while fetching the data.';
+        } finally {
+            isLoading = false; // Set loading to false when the request is complete
+        }
+    }
 </script>
 
 <main class="mainGridContainer">
@@ -56,6 +76,9 @@
             sendMessageToLLMModel(); // Call the function with the current message
             message = ''; // Clear the input message after sending
         }}>Send</button>
+
+        <button on:click={() => getFinancialAdvice('2023-09-01', '2023-09-30')}>Get Financial Advice</button>
+
         {#if isLoading}
             <p>Please wait...</p> <!-- Display this message when isLoading is true -->
         {/if}
